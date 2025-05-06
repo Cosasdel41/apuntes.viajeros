@@ -88,6 +88,12 @@
       background-color: var(--azul-intermedio);
     }
 
+    .contacto {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--azul-oscuro);
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 15px;
@@ -216,7 +222,10 @@
           Páginas: ${row[7]} | Año: ${row[8]}<br>
           Ciclo: ${row[9]} | Calificación: ${row[10]}
           ${downloadLinkHTML}
-          <div class="hidden contacto"><br><strong>Estudiante:</strong> ${row[11]}<br><strong>Tel:</strong> ${row[12]}</div>
+          <div class="hidden contacto">
+            <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[11]}
+            <br><small>Base de Datos y Buscador optimizada por <strong>Cosas del ISFD 41</strong>, seguinos en IG <a href="https://instagram.com/cosasdelisfd41" target="_blank">@cosasdelisfd41</a></small>
+          </div>
         `;
         card.addEventListener("click", () => {
           card.querySelector(".contacto").classList.toggle("hidden");
