@@ -73,6 +73,21 @@
       display: none;
     }
 
+    .descargar {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: var(--azul-oscuro);
+      color: white;
+      padding: 8px 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .descargar:hover {
+      background-color: var(--azul-intermedio);
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 15px;
@@ -176,14 +191,16 @@
       }
 
       coincidencias.forEach(row => {
+        const chipLink = row[13]?.trim(); // columna N
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-          <strong>${row[3]}</strong> - ${row[4]}<br>
-          <em>${row[2]}</em><br>
+          <strong>${row[3]}</strong> - <em>${row[4]}</em><br>
+          Docente: ${row[2]}<br>
           Editorial: ${row[5]} (${row[6]})<br>
           Páginas: ${row[7]} | Año: ${row[8]}<br>
           Ciclo: ${row[9]} | Calificación: ${row[10]}
+          ${chipLink ? `<br><a class="descargar" href="${chipLink}" target="_blank" download>Descargar archivo</a>` : ""}
           <div class="hidden contacto"><br><strong>Estudiante:</strong> ${row[11]}<br><strong>Tel:</strong> ${row[12]}</div>
         `;
         card.addEventListener("click", () => {
