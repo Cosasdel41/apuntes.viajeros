@@ -32,7 +32,6 @@
     }
 
     select,
-    input,
     button {
       width: 100%;
       max-width: 500px;
@@ -79,7 +78,6 @@
         padding: 15px;
       }
 
-      input,
       select,
       button {
         font-size: 16px;
@@ -95,12 +93,14 @@
   <h1>Buscador de Textos</h1>
 
   <label for="unidadSelect">Unidad Curricular:</label>
-  <select id="unidadSelect">
+  <select id="unidadSelect" onchange="actualizarDocentes()">
     <option value="">-- Seleccionar --</option>
   </select>
 
-  <label for="docenteInput">Docente:</label>
-  <input type="text" id="docenteInput" placeholder="Ej: Prof. García" />
+  <label for="docenteSelect">Docente:</label>
+  <select id="docenteSelect">
+    <option value="">-- Seleccionar --</option>
+  </select>
 
   <button onclick="buscar()">Buscar</button>
 
@@ -132,6 +132,28 @@
       });
     }
 
+    function actualizarDocentes() {
+      const unidadSeleccionada = document.getElementById("unidadSelect").value;
+      const selectDocente = document.getElementById("docenteSelect");
+      selectDocente.innerHTML = '<option value="">-- Seleccionar --</option>';
+
+      const docentesSet = new Set();
+
+      datosGlobales.forEach(row => {
+        if (row[1]?.trim().toLowerCase() === unidadSeleccionada) {
+          const docente = row[2]?.trim();
+          if (docente) docentesSet.add(docente);
+        }
+      });
+
+      docentesSet.forEach(docente => {
+        const option = document.createElement("option");
+        option.value = docente.toLowerCase();
+        option.textContent = docente;
+        selectDocente.appendChild(option);
+      });
+    }
+
     async function inicializar() {
       datosGlobales = await cargarDatos();
       poblarUnidadesCurriculares(datosGlobales);
@@ -139,13 +161,13 @@
 
     function buscar() {
       const unidad = document.getElementById("unidadSelect").value;
-      const docente = document.getElementById("docenteInput").value.trim().toLowerCase();
+      const docente = document.getElementById("docenteSelect").value;
       const resultadosDiv = document.getElementById("resultados");
       resultadosDiv.innerHTML = "";
 
       const coincidencias = datosGlobales.filter(row =>
         row[1]?.trim().toLowerCase() === unidad &&
-        row[2]?.toLowerCase().includes(docente)
+        row[2]?.trim().toLowerCase() === docente
       );
 
       if (coincidencias.length === 0) {
