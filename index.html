@@ -61,16 +61,6 @@
       padding: 15px;
       margin-bottom: 15px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: background-color 0.3s;
-    }
-
-    .card:hover {
-      background-color: #f9f9f9;
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none;
     }
 
     .descargar {
@@ -94,6 +84,24 @@
       color: var(--azul-oscuro);
     }
 
+    .boton-agregar {
+      display: inline-block;
+      text-align: center;
+      background-color: var(--azul-intermedio);
+      color: white;
+      padding: 12px 20px;
+      margin-top: 30px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .boton-agregar:hover {
+      background-color: var(--azul-oscuro);
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 15px;
@@ -106,6 +114,11 @@
 
       .card {
         padding: 12px;
+      }
+
+      .boton-agregar {
+        width: 100%;
+        font-size: 16px;
       }
     }
   </style>
@@ -134,7 +147,7 @@
       const response = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vS_gVeNConpZM6PzJPRx3r-xHzpEz6j1TITlrJwRkBZWds4xg7PoCs3DMpc8GvRlX8Q-7OnhtP7kSwS/pub?output=csv");
       const data = await response.text();
       const rows = data.split("\n").map(row => row.split(","));
-      return rows.slice(1); // omitir encabezado
+      return rows.slice(1);
     }
 
     function poblarUnidadesCurriculares(datos) {
@@ -193,45 +206,52 @@
 
       if (coincidencias.length === 0) {
         resultadosDiv.innerHTML = "<p>No hay textos disponibles para la búsqueda.</p>";
-        return;
+      } else {
+        coincidencias.forEach(row => {
+          let chipLink = row[13]?.trim();
+          let downloadLinkHTML = "";
+
+          if (chipLink && chipLink.includes("drive.google.com")) {
+            const match = chipLink.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+            if (match) {
+              const fileId = match[1];
+              chipLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
+              downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
+            } else {
+              downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Ver archivo</a>`;
+            }
+          } else if (chipLink) {
+            downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
+          }
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <strong>Unidad Curricular:</strong> ${row[1]}<br>
+            <strong>Tema:</strong> ${row[3]}<br>
+            <strong>Docente:</strong> ${row[2]}<br>
+            <strong>Autor:</strong> <em>${row[4]}</em><br>
+            <strong>Tipo:</strong> ${row[10]}<br>
+            <strong>Editorial:</strong> ${row[5]} | <strong>Edición:</strong> ${row[6]}<br>
+            <strong>Páginas:</strong> ${row[7]} | <strong>Año de Publicación:</strong> ${row[8]}<br>
+            <strong>Ciclo Lectivo:</strong> ${row[9]}<br><br>
+            ${downloadLinkHTML}
+            <div class="contacto">
+              <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[11]}
+              <br><strong>Base de Datos y Buscador optimizados por Cosas del 41</strong>
+              <br>Seguinos en Instagram: <a href="https://instagram.com/cosasdelisfd41" target="_blank">@cosasdel41</a>
+            </div>
+          `;
+          resultadosDiv.appendChild(card);
+        });
       }
 
-      coincidencias.forEach(row => {
-        let chipLink = row[13]?.trim();
-        let downloadLinkHTML = "";
-
-        if (chipLink && chipLink.includes("drive.google.com")) {
-          const match = chipLink.match(/\/d\/([a-zA-Z0-9_-]+)\//);
-          if (match) {
-            const fileId = match[1];
-            chipLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            downloadLinkHTML = `<br><a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
-          } else {
-            downloadLinkHTML = `<br><a class="descargar" href="${chipLink}" target="_blank">Ver archivo</a>`;
-          }
-        } else if (chipLink) {
-          downloadLinkHTML = `<br><a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
-        }
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <strong>${row[3]}</strong> - <em>${row[4]}</em><br>
-          Docente: ${row[2]}<br>
-          Editorial: ${row[5]} (${row[6]})<br>
-          Páginas: ${row[7]} | Año: ${row[8]}<br>
-          Ciclo: ${row[9]} | Calificación: ${row[10]}
-          ${downloadLinkHTML}
-          <div class="hidden contacto">
-            <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[11]}
-            <br><small>Base de Datos y Buscador optimizada por <strong>Cosas del ISFD 41</strong>, seguilos en IG <a href="https://instagram.com/cosasdelisfd41" target="_blank">@cosasdelisfd41</a></small>
-          </div>
-        `;
-        card.addEventListener("click", () => {
-          card.querySelector(".contacto").classList.toggle("hidden");
-        });
-        resultadosDiv.appendChild(card);
-      });
+      const botonAgregar = document.createElement("a");
+      botonAgregar.className = "boton-agregar";
+      botonAgregar.href = "https://docs.google.com/forms/d/e/1FAIpQLSeHCphfW1np5NyAPeaPXTgmGe4M3aJ0aoju3gb49inb_xdk9g/viewform?usp=sharing";
+      botonAgregar.target = "_blank";
+      botonAgregar.textContent = "Suma tu apunte viajero acá";
+      resultadosDiv.appendChild(botonAgregar);
     }
 
     window.onload = inicializar;
