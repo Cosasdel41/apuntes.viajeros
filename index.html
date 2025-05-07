@@ -85,9 +85,7 @@
     }
 
     .boton-agregar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       text-align: center;
       background-color: var(--azul-intermedio);
       color: white;
@@ -98,17 +96,11 @@
       font-weight: bold;
       font-size: 16px;
       transition: background-color 0.3s ease;
-      gap: 10px;
+      max-width: 100%;
     }
 
     .boton-agregar:hover {
       background-color: var(--azul-oscuro);
-    }
-
-    .boton-agregar svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
     }
 
     @media (max-width: 600px) {
@@ -128,11 +120,6 @@
       .boton-agregar {
         width: 100%;
         font-size: 16px;
-      }
-
-      .boton-agregar svg {
-        width: 18px;
-        height: 18px;
       }
     }
   </style>
@@ -246,7 +233,8 @@
             <strong>Tipo:</strong> ${row[10]}<br>
             <strong>Editorial:</strong> ${row[5]} | <strong>Edición:</strong> ${row[6]}<br>
             <strong>Páginas:</strong> ${row[7]} | <strong>Año de Publicación:</strong> ${row[8]}<br>
-            <strong>Ciclo Lectivo:</strong> ${row[9]}<br><br>
+            <strong>Ciclo Lectivo:</strong> ${row[9]}<br>
+            <strong>Calidad del texto:</strong> ${row[11]} estrellas<br><br>
             ${downloadLinkHTML}
             <div class="contacto">
               <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[12]}
@@ -262,10 +250,7 @@
       botonAgregar.className = "boton-agregar";
       botonAgregar.href = "https://docs.google.com/forms/d/e/1FAIpQLSeHCphfW1np5NyAPeaPXTgmGe4M3aJ0aoju3gb49inb_xdk9g/viewform?usp=sharing";
       botonAgregar.target = "_blank";
-      botonAgregar.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M416 448c-35.3 0-64 28.7-64 64H96c-17.7 0-32-14.3-32-32V160h64V416h352v32h-64zm0-96c17.7 0 32 14.3 32 32H128V192h320v160zm144-80h-64v64h64v64l96-96-96-96v64z"/></svg>
-        Suma tu apunte viajero acá
-      `;
+      botonAgregar.textContent = "Suma tu apunte viajero acá";
       resultadosDiv.appendChild(botonAgregar);
     }
 
