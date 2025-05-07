@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Buscador de Textos</title>
   <style>
     :root {
@@ -85,7 +85,9 @@
     }
 
     .boton-agregar {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       background-color: var(--azul-intermedio);
       color: white;
@@ -96,10 +98,17 @@
       font-weight: bold;
       font-size: 16px;
       transition: background-color 0.3s ease;
+      gap: 10px;
     }
 
     .boton-agregar:hover {
       background-color: var(--azul-oscuro);
+    }
+
+    .boton-agregar svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
     }
 
     @media (max-width: 600px) {
@@ -119,6 +128,11 @@
       .boton-agregar {
         width: 100%;
         font-size: 16px;
+      }
+
+      .boton-agregar svg {
+        width: 18px;
+        height: 18px;
       }
     }
   </style>
@@ -208,20 +222,18 @@
         resultadosDiv.innerHTML = "<p>No hay textos disponibles para la búsqueda.</p>";
       } else {
         coincidencias.forEach(row => {
-          let chipLink = row[13]?.trim();
+          let pdfLink = row[14]?.trim();
           let downloadLinkHTML = "";
 
-          if (chipLink && chipLink.includes("drive.google.com")) {
-            const match = chipLink.match(/\/d\/([a-zA-Z0-9_-]+)\//);
+          if (pdfLink && pdfLink.includes("drive.google.com")) {
+            const match = pdfLink.match(/\/d\/([a-zA-Z0-9_-]+)\//);
             if (match) {
               const fileId = match[1];
-              chipLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
-              downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
+              pdfLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
+              downloadLinkHTML = `<a class="descargar" href="${pdfLink}" target="_blank">Descargar archivo</a>`;
             } else {
-              downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Ver archivo</a>`;
+              downloadLinkHTML = `<a class="descargar" href="${pdfLink}" target="_blank">Ver archivo</a>`;
             }
-          } else if (chipLink) {
-            downloadLinkHTML = `<a class="descargar" href="${chipLink}" target="_blank">Descargar archivo</a>`;
           }
 
           const card = document.createElement("div");
@@ -237,7 +249,7 @@
             <strong>Ciclo Lectivo:</strong> ${row[9]}<br><br>
             ${downloadLinkHTML}
             <div class="contacto">
-              <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[11]}
+              <br><strong>Este apunte emprendió viaje gracias a:</strong> ${row[12]}
               <br><strong>Base de Datos y Buscador optimizados por Cosas del 41</strong>
               <br>Seguinos en Instagram: <a href="https://instagram.com/cosasdelisfd41" target="_blank">@cosasdel41</a>
             </div>
@@ -250,7 +262,10 @@
       botonAgregar.className = "boton-agregar";
       botonAgregar.href = "https://docs.google.com/forms/d/e/1FAIpQLSeHCphfW1np5NyAPeaPXTgmGe4M3aJ0aoju3gb49inb_xdk9g/viewform?usp=sharing";
       botonAgregar.target = "_blank";
-      botonAgregar.textContent = "Suma tu apunte viajero acá";
+      botonAgregar.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M416 448c-35.3 0-64 28.7-64 64H96c-17.7 0-32-14.3-32-32V160h64V416h352v32h-64zm0-96c17.7 0 32 14.3 32 32H128V192h320v160zm144-80h-64v64h64v64l96-96-96-96v64z"/></svg>
+        Suma tu apunte viajero acá
+      `;
       resultadosDiv.appendChild(botonAgregar);
     }
 
